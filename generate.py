@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from scoring_functions import ADScoringFunction, score
 from rdkit import Chem 
 
-def generate(dataset,
+def generate(optimizer_name, dataset,
              n_estimators,
              seed,
              optimizer,
@@ -43,9 +43,9 @@ def generate(dataset,
             ad_names += ad[i](["CCC"], ad_features[i]).name
             ad_names += '_'
             ad_names += str(ad_features[i].__name__)
-        results_dir = os.path.join(base_results, "lstm_hc", dataset, str(qsar_features.__name__) + ad_names, strftime("%Y-%m-%d_%H:%M:%S", gmtime()))
+        results_dir = os.path.join(base_results, optimizer_name, dataset, str(qsar_features.__name__) + ad_names, strftime("%Y-%m-%d_%H:%M:%S", gmtime()))
     else:
-        results_dir = os.path.join(base_results, "lstm_hc", dataset, str(qsar_features.__name__) + '_' + ad(["CCC"], ad_features).name  + '_' + str(ad_features.__name__), strftime("%Y-%m-%d_%H:%M:%S", gmtime()))
+        results_dir = os.path.join(base_results, optimizer_name, dataset, str(qsar_features.__name__) + '_' + ad(["CCC"], ad_features).name  + '_' + str(ad_features.__name__), strftime("%Y-%m-%d_%H:%M:%S", gmtime()))
     
     os.makedirs(results_dir, exist_ok=True)
     
@@ -53,7 +53,9 @@ def generate(dataset,
     df = pd.read_csv(assay_file)
    
     df['features'] = qsar_features(df.smiles)
-    df_train, df_test = train_test_split(df, test_size=0.25, stratify=df['label'], random_state=0)
+    df_train, df_evaluate = train_test_split(df, test_size=0.25, stratify=df['label'], random_state=0)
+    df_train, df_test = train_test_split(df_train, test_size=0.25, stratify=df_train['label'], random_state=0)
+
     X1 = np.array(list(df_train['features']))
     X2 = np.array(list(df_test['features']))
     y1 = np.array(list(df_train['label']))

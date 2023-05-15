@@ -1,6 +1,3 @@
 __pycache__/*
 .ipynb_checkpoints/*
-data/*
-datasets/11*
-results/11*
-
+.DS_Store
