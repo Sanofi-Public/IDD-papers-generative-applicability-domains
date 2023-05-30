@@ -140,7 +140,7 @@ def one_physchem(smile):
             ri = m.GetRingInfo()
             n_rings = len(ri.AtomRings())
             max_ring_size = len(max(ri.AtomRings(), key=len, default=()))
-            min_ring_size = len(max(ri.AtomRings(), key=len, default=()))
+            min_ring_size = len(min(ri.AtomRings(), key=len, default=()))
             total_charges = sum(charges)
             min_charge = min(charges)
             max_charge = max(charges)
