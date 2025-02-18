@@ -9,7 +9,6 @@ from guacamol.scoring_function import BatchScoringFunction
 from rdkit import Chem
 from rdkit.Chem import AllChem
 from featurizers import ecfp4
-import Levenshtein
 
 class AD():
     """Each applicability domain class inherits from the AD class.
@@ -151,11 +150,27 @@ class levenshtein(AD):
         self.threshold = threshold
         self.name = "levenshtein"
 
+    def levenshtein_ratio(s1, s2):
+        if len(s1) > len(s2):
+            s1, s2 = s2, s1
+
+        distances = range(len(s1) + 1)
+        for i2, c2 in enumerate(s2):
+            distances_ = [i2+1]
+            for i1, c1 in enumerate(s1):
+                if c1 == c2:
+                    distances_.append(distances[i1])
+                else:
+                    distances_.append(1 + min((distances[i1], distances[i1 + 1], distances_[-1])))
+            distances = distances_
+        ratio = 1 - distances[-1]/max(len(s1),len(s2))
+        return ratio
+
     def check_smiles_list(self, smiles_list):
         is_in_AD = []
         for smiles in smiles_list:
             if Chem.MolFromSmiles(smiles):
-                score = max([Levenshtein.ratio(smiles, y) for y in self.table])
+                score = max([levenshtein_ratio(smiles, y) for y in self.table])
                 is_in_AD.append(1 * score>self.threshold)
             else:
                 is_in_AD.append(0)
