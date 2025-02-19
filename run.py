@@ -25,8 +25,8 @@ opt_args['lstm_hc'] = dict(
     sample_final_model_only=False,
     random_start=False,
     smi_file='./data/test.smiles',
-    n_jobs=-1,
-    canonicalize=False)
+    n_jobs=-1
+    )
 
 opt_args['graph_ga'] = dict(
     smi_file = 'data/utils.smi', 
